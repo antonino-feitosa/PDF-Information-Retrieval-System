@@ -17,8 +17,10 @@ hull/affine span/convex hull of X, denoted sp(X)/cone(X)/aff(X)/conv(X), is
 the set of all (finite) linear/conical/affine/convex combinations of points in X.
 Equivalently, and this needs a proof, sp(X)/cone(X)/aff(X)/conv(X) is the
 intersection of all subspaces/cones/affine sets/convex sets containing X.
-data collection
-memetic algorithm
-genetic algorithms
-simulated annealing
+data collection.
+memetic algorithm.
+genetic algorithms.
+simulated annealing.
+machine learning.
+
 9

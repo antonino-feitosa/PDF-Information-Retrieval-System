@@ -1,20 +1,11 @@
 
-import rpy2.robjects as robjects
-from rpy2.robjects.packages import importr
+import os
+os.environ["R_HOME"] = r"C:\Program Files\R\R-4.2.2"
 
-base = importr('base')
+from rpy2.robjects.packages import importr
 pdftools = importr('pdftools')
 
-robjects.r('''
-	extractPDF <- function(fileName){
-		pdf.text <- pdftools::pdf_text(fileName);
-		return(cat(paste(pdf.text[])));
-	}
-''')
-
-
-path = r'C:\Users\anton\Documents\Books\A First Course in Combinatorial Optimization.pdf'
-
-text = robjects.r['extractPDF'](path)
-
-
+def extractPDF(fileName):
+	text = pdftools.pdf_text(fileName)
+	text = '\n'.join(text)
+	return text
