@@ -28,10 +28,10 @@ class Trie:
         else:
             return root.value
 
-    def add(self, key, value):
-        return self._add(key, value, self.root, 0)
+    def put(self, key, value):
+        return self._put(key, value, self.root, 0)
 
-    def _add(self, key, value, root, level):
+    def _put(self, key, value, root, level):
         if level == len(key):
             root.value = value
             return self
@@ -39,4 +39,16 @@ class Trie:
             code = key[level]
             if not root.hasChild(code):
                 root.child[code] = Node()
-            return self._add(key, value, root.child[code], level + 1)
+            return self._put(key, value, root.child[code], level + 1)
+    
+    def __str__(self):
+        return self._tostr(self.root, '', 0)
+    
+    def _tostr(self, node, key, level):
+        if node is None:
+            return ''
+        else:
+            res = (' ' * level) + ' {%s, %s} \n' % (key, node.value) if node.value is not None else ''
+            for k, n in node.child.items():
+                res += self._tostr(n, key + k, level + 1)
+            return res

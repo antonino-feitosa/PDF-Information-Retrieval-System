@@ -6,15 +6,6 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from TextExtraction import extractPDF
 
 
-def extractText(fileName):
-    return extractPDF(fileName)
-
-
-def loadText(fileName):
-    f = open(fileName, mode='r', encoding='utf-8')
-    return f.read()
-
-
 def cleaning(text: str):
     text = re.sub(r'\d+', ' ', text)			# remove numbers
     text = re.sub(r'\S*https?:\S*', '', text)   # remove links
@@ -40,11 +31,16 @@ def getNgrams(sentences, n):
     return result
 
 
-def run():
-    #fileName = os.path.abspath('./data/sample.pdf')
-    #text = extractText(fileName)
-    fileName = os.path.abspath('./data/sample.txt')
-    text = loadText(fileName)
+def extractWords(fileName, isPDF = True):
+    #fileName = os.path.abspath('./data/sample.txt')
+    fileName = os.path.abspath(fileName)
+    text = ''
+    if isPDF:
+        text = extractPDF(fileName)
+    else:
+        f = open(fileName, mode='r', encoding='utf-8')
+        text = f.read()
+    
     sentences = sent_tokenize(text)
     sentences = [cleaning(sent) for sent in sentences]
     sentences = [word_tokenize(sent) for sent in sentences if sent]
@@ -54,17 +50,9 @@ def run():
     bigram = getNgrams(sentences, 2)
     trigram = getNgrams(sentences, 3)
     result = onegram + bigram + trigram
-    result = trigram
 
-    print(result)
-    #fd = nltk.FreqDist(result)
-    # fd.plot()
-    # fd.freq('')
-    #print(fd['linear'])
-    # term frequency
-    # 1 gram and bigrams
-
-    # print(fd.N())
+    fd = nltk.FreqDist(result)
+    return fd.items(), fd[fd.max()], fd.N()
 
 
 def downloadNLTK():
@@ -72,7 +60,3 @@ def downloadNLTK():
     nltk.download('wordnet')
     nltk.download('omw-1.4')
     nltk.download('averaged_perceptron_tagger')
-
-
-# downloadNLTK()
-run()
