@@ -2,12 +2,8 @@
 import os
 import re
 import nltk
-from nltk import RegexpParser
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 from TextExtraction import extractPDF
-
 
 
 def extractText(fileName):
@@ -30,7 +26,11 @@ def cleaning(text: str):
 
 
 def getNgrams(sentences, n):
-    reg_exp = 'NP: {<JJ.?>}' if n == 1 else 'NP: {<NN><NN.?>|<NNS><NN.?>|<JJ.?><NN.?>|<NN.?><JJ.?>}'
+    reg_exp = 'NP: {<JJ.?>}'
+    if n == 2:
+        reg_exp = 'NP: {<NN><NN.?>|<NNS><NN.?>|<JJ.?><NN.?>|<NN.?><JJ.?>}'
+    elif n == 3:
+        reg_exp = 'NP: {<NN><NN.?><NN.?>|<NNS><NN.?><NN.?>|<JJ.?><NN.?><NN.?>|<NN.?><NN.?><JJ.?>}'
     rp = nltk.RegexpParser(reg_exp)
     sentences = [rp.parse(tags) for tags in sentences]
     result = []
@@ -52,17 +52,19 @@ def run():
 
     onegram = getNgrams(sentences, 1)
     bigram = getNgrams(sentences, 2)
-    result = onegram + bigram
-    
-    fd = nltk.FreqDist(result)
-    #fd.plot()
-    #fd.freq('')
-    print(fd['linear'])
+    trigram = getNgrams(sentences, 3)
+    result = onegram + bigram + trigram
+    result = trigram
+
+    print(result)
+    #fd = nltk.FreqDist(result)
+    # fd.plot()
+    # fd.freq('')
+    #print(fd['linear'])
     # term frequency
     # 1 gram and bigrams
-    
-    #print(fd.N())
 
+    # print(fd.N())
 
 
 def downloadNLTK():
@@ -71,5 +73,6 @@ def downloadNLTK():
     nltk.download('omw-1.4')
     nltk.download('averaged_perceptron_tagger')
 
-#downloadNLTK()
+
+# downloadNLTK()
 run()
