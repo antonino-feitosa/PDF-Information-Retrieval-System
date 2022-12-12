@@ -6,7 +6,7 @@ import pickle
 from Trie import *
 from Preprocessing import *
 
-def createIndex(directory, verbose = False):
+def parseDirectory(directory, verbose = False):
     tree = Trie()
     num_documents = 0
 
@@ -40,7 +40,7 @@ def writeData(data, fileName):
 
 def createIndex(directory):
     print(directory)
-    num_documents, tree = createIndex(directory, True)
+    num_documents, tree = parseDirectory(directory, True)
     writeData((num_documents, tree), '.\\data_index.dat')
 
 def loadIndex():
@@ -48,23 +48,33 @@ def loadIndex():
 
 
 #directory = os.path.join('.', 'private')
+#createIndex(os.path.join('.', 'data'))
 #num_documents, tree = loadIndex()
-'''
-    with open('./view.txt', 'w', encoding='utf-8') as f:
-    f.write(str(num_documents) + '\n\n')
-    f.write(str(tree))
-'''
+
+#with open('./view.txt', 'w', encoding='utf-8') as f:
+#    f.write(str(num_documents) + '\n\n')
+#    f.write(str(tree))
+
 
 # precedence: not and or
-def searchQuery(query):
+def searchQuery(query, tree, num_docs):
     query = re.sub(r'\s+', ' ',   query)			# remove duplicated spaces
     query = query.strip()
     
-    and_sent = query.split('or')
+    for or_term in query.split('or'):
+        or_term = or_term.strip()
+        for and_term in or_term:
+            and_term.strip()
+            if and_term.startswith('not '):
+                and_term = and_term[4:-1]
+            
+    
 
+'''
 while(True):
     query = input('\nQuery: ')
     print('Searching:', query)
     if(query):
         words = extractWords(query, True)
         print(words)
+'''

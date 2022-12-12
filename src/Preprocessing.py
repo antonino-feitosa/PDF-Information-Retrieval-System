@@ -18,7 +18,7 @@ def cleaning(text: str):
 
 
 def getNgrams(sentences, n):
-    reg_exp = 'NP: {<NN.?>}'
+    reg_exp = 'NP: {<NN.?>|<JJ.?>|<RB.?>}'
     if n == 2:
         reg_exp = 'NP: {<NN.?><NN.?>|<JJ.?><NN.?>|<NN.?><JJ.?>|<RB.?><NN.?>|<NN.?><RB.?>}'
     elif n == 3:

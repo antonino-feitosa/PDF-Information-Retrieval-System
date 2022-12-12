@@ -27,6 +27,19 @@ class Trie:
                 return None
         else:
             return root.value
+    
+    def _getAll(self, root, key, level):
+        if level < len(key):
+            code = key[level]
+            if root.hasChild(code):
+                return self._get(root.child[code], key, level + 1)
+            else:
+                return []
+        else:
+            res = [root.value] if root.value else []
+            for suf, node in root.child.items():
+                res += root._getAll(node, key + suf, level + 1)
+            return res
 
     def put(self, key, value):
         return self._put(key, value, self.root, 0)

@@ -23,7 +23,8 @@ We stores the inverted index writing the Trie and number of documenta in the fil
 
 # Future Works
 
-- [ ] 
+- [ ] Apply spell checker
+- [ ] Remove math symbols from the text
 
 # References
 
