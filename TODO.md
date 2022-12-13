@@ -6,7 +6,7 @@
 - [x] Perform Parts of speech tagging selecting only the nouns
 - [x] Create inverted index through of a radix tree
 - [x] Store the inverted index
-- [ ] Create the query system using boolean expressions (and, or and not operators)
+- [x] Create the query system using boolean expressions (and, or and not operators)
 - [ ] Develop a web system to performs queries
 
 # Report
@@ -25,6 +25,10 @@ We stores the inverted index writing the Trie and number of documenta in the fil
 
 - [ ] Apply spell checker
 - [ ] Remove math symbols from the text
+- [ ] Add tag marker (automatic, key-words extraction)
+- [ ] Add title bookmarks
+- [ ] Article Reference
+- [ ] Book cover visualization
 
 # References
 

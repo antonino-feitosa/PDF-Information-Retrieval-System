@@ -8,8 +8,27 @@ extractPDF <- function(fileName){
 	return(cat(paste(pdf.text[])));
 }
 
+fileName <- r'(C:\Users\anton\Documents\Books\[Literatura]\A Brief History of Time.pdf)';
+pdf.text <- pdftools::pdf_text(fileName)
+cat(paste(pdf.text[2]))
 
-#fileName <- 'C:\\Users\\anton\\Documents\\Books\\A First Course in Combinatorial Optimization.pdf';
+bitmap <- pdf_render_page(fileName, page = 1)
+png::writePNG(bitmap, "page.png")
+
+
+r <- png::writePNG(bitmap, raw())
+r <- png::readPNG(r)
+
+
+
+install.packages("imager")
+library(imager)
+
+
+
+?pdf_convert
+
+
 
 #cat(extractPDF(fileName))
 

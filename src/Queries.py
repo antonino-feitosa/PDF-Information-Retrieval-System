@@ -12,9 +12,10 @@ not_sts = not text | text
 '''
 
 class ProcessQuery:
-    def __init__(self, tree, num_docs, max_res=10):
+    def __init__(self, tree, processed, max_res=10):
         self.tree = tree
-        self.num_docs = num_docs
+        self.processed = processed
+        self.num_docs = len(processed)
         self.max_res = max_res
 
     def parse(self, text):
