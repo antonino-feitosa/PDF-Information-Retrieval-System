@@ -9,10 +9,7 @@ sts = or_sts or sts | or_Sts
 or_sts = and_sts or or_sts | and_sts
 and_sts = not_sts and and_sts | not_sts
 not_sts = not text | text
-
-
 '''
-
 
 class ProcessQuery:
     def __init__(self, tree, num_docs, max_res=10):
@@ -23,10 +20,12 @@ class ProcessQuery:
     def parse(self, text):
         text = re.sub(r'\s+', ' ', text)
         text = text.strip()
-        heap = self.parse_or(text)
+        heap, _ = self.parse_or(text)
         result = []
-        for _ in range(min(len(heap), self.max_res)):
+        count = 0
+        while count < self.max_res and heap:
             result.append(heapq.heappop(heap))
+            count += 1
         return result
 
     def parse_or(self, text):
@@ -39,7 +38,6 @@ class ProcessQuery:
             heap = self._union(lside, rside, lexclude, rexclude)
             return heap, False
         else:
-            print('or:', text)
             return self.parse_and(text)
 
     def parse_and(self, text):
@@ -71,53 +69,64 @@ class ProcessQuery:
             return heap
         else:
             return []
-    
+
     def _union(self, a_list, b_list, a_exclude, b_exclude):
-        result = []
-        heapq.heapify(result)
+        result, handle = self._handle_exclude(
+            a_list, b_list, a_exclude, b_exclude)
+        if not handle:
+            for (a_value, a_path) in a_list:
+                b_value = self._contains(a_path, b_list)
+                if b_value:
+                    a_value = min(a_value, b_value) # min priority
+                result.append((a_value, a_path))
+            for (b_value, b_path) in b_list:
+                if not self._contains(b_path, a_list):
+                    result.append((b_value, b_path))
+            heapq.heapify(result)
         return result
 
     def _intersect(self, a_list, b_list, a_exclude, b_exclude):
-        if a_exclude and b_exclude:
-            return []
-        result = []
-        if not a_exclude and not b_exclude:
+        result, handle = self._handle_exclude(
+            a_list, b_list, a_exclude, b_exclude)
+        if not handle:
             for (a_value, a_path) in a_list:
-                for (b_value, b_path) in b_list:
-                    if a_path == b_path:
-                        # min priority
-                        result.append((min(a_value, b_value), a_path))
-        elif a_exclude and not b_exclude:
-            
-        heapq.heapify(result)
+                b_value = self._contains(a_path, b_list)
+                if b_value:  # min priority
+                    result.append((min(a_value, b_value), a_path))
+            heapq.heapify(result)
         return result
-    
+
+    def _handle_exclude(self, a_list, b_list, a_exclude, b_exclude):
+        if a_exclude and not b_exclude:
+            return self._diff(b_list, a_list), True
+        elif not a_exclude and b_exclude:
+            return self._diff(a_list, b_list), True
+        elif a_exclude and b_exclude:
+            return [], True
+        return [], False
+
     def _diff(self, a_list, minus_list):
         result = []
-        for (a_value, a_path) in a_list:
-            for (b_value, b_path) in b_list:
-                if a_path == b_path:
-                    # min priority
-                    result.append((min(a_value, b_value), a_path))
-        elif a_exclude and not b_exclude:
+        for (value, path) in a_list:
+            if not self._contains(path, minus_list):
+                result.append((value, path))
+        heapq.heapify(result)
+        return result
+
+    def _contains(self, path, list):
+        for (v, x) in list:
+            if x == path:
+                return v
+        return None
 
 
-# precedence: not and or
 
+#num_documents, tree = loadIndex()
 
-def searchQuery(query, tree, num_docs):
-    query = re.sub(r'\s+', ' ',   query)			# remove duplicated spaces
-    query = query.strip()
-
-    for or_term in query.split('or'):
-        or_term = or_term.strip()
-        for and_term in or_term:
-            and_term.strip()
-            if and_term.startswith('not '):
-                and_term = and_term[4:-1]
-
-
-num_documents, tree = loadIndex()
-
-process = ProcessQuery(tree, num_documents)
-print(process.parse('algorithm and not genetic'))
+#process = ProcessQuery(tree, num_documents)
+#print(process.parse('algorithm'))
+#print(process.parse('genetic'))
+#print(process.parse('algorithm or genetic'))
+#print(process.parse('algorithm and genetic'))
+#print(process.parse('algorithm and not genetic or math and not math'))
+#
