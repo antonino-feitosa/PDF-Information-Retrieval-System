@@ -26,22 +26,21 @@ class handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-
         message = ''
         print(self.path)
         if self.path == '/':
+            self.send_header('Content-type', 'text/html')
             file = open('./src/index.html').read()
             message = file
             message = bytes(message, "utf8")
         elif self.path == '/favicon.ico':
-            file = open('./favicon.ico', 'rb').read()
             self.send_header('Content-Type', 'image/x-icon')
+            file = open('./favicon.ico', 'rb').read()
             #self.send_header('Content-Length', len(file))
             self.end_headers()
             message = file
         elif self.path.startswith('/search'):
+            self.send_header('Content-type', 'text/html')
             query_components = parse_qs(urlparse(self.path).query)
             exp = query_components['query'][0]
             books = query_components['type'][0]
@@ -49,6 +48,7 @@ class handler(BaseHTTPRequestHandler):
             message = self.search_expression(exp, books == 'Books', index)
             message = bytes(message, "utf8")
         elif self.path.startswith('/open'):
+            self.send_header('Content-type', 'text/html')
             try:
                 query_components = parse_qs(urlparse(self.path).query)
                 path = query_components['path'][0]
@@ -57,7 +57,8 @@ class handler(BaseHTTPRequestHandler):
             except:
                 message = 'Error!'
             message = bytes(message, "utf8")
-            
+
+        self.end_headers()
         self.wfile.write(message)
 
     def search_expression(self, expression, book=True, queryIndex=0):
