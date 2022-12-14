@@ -36,12 +36,10 @@ class handler(BaseHTTPRequestHandler):
         elif self.path == '/favicon.ico':
             self.send_header('Content-Type', 'image/x-icon')
             file = open('./favicon.ico', 'rb').read()
-            #self.send_header('Content-Length', len(file))
-            self.end_headers()
             message = file
         elif self.path.startswith('/search'):
             self.send_header('Content-type', 'text/html')
-            query_components = parse_qs(urlparse(self.path).query)
+            query_components = parse_qs(urlparse(self.path).query, keep_blank_values = True)
             exp = query_components['query'][0]
             books = query_components['type'][0]
             index = int(query_components['queryIndex'][0])
