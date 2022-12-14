@@ -12,21 +12,18 @@ not_sts = not text | text
 '''
 
 class ProcessQuery:
-    def __init__(self, tree, processed, max_res=10):
+    def __init__(self, tree, processed):
         self.tree = tree
         self.processed = processed
         self.num_docs = len(processed)
-        self.max_res = max_res
 
     def parse(self, text):
         text = re.sub(r'\s+', ' ', text)
         text = text.strip()
         heap, _ = self.parse_or(text)
         result = []
-        count = 0
-        while count < self.max_res and heap:
+        while heap:
             result.append(heapq.heappop(heap))
-            count += 1
         return result
 
     def parse_or(self, text):

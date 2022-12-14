@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Books and Articles</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+    <style>
+        body {
+            padding: 40px;
+            background-color: #eee;
+        }
+
+        table {
+            width: 100%;
+
+        }
+
+        td.search {
+            border: 1px solid #aaa;
+        }
+
+        td.tmp-result {
+            padding: 5px;
+            border: 1px solid #aaa;
+        }
+
+        input {
+            margin: 2px;
+        }
+
+        input[type="search"] {
+            width: -moz-available;
+        }
+
+        input[type="submit"] {
+            width: 100px;
+        }
+
+        input[type="search"]::-webkit-search-cancel-button {
+            position: relative;
+            right: 20px;
+        }
+
+        span {
+            margin: 2px;
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="result">
+        <tr>
+            <td class="search">
+                <input id="query" type="search" name="query" placeholder="Search expression... (and, or, not operators)"
+                    onkeypress="keysearch(event);">
+                <br>
+                <input id="command" type="button" value="Search" onclick="search();">
+                <select id="type" name="type">
+                    <option value="Books">Books</option>
+                    <option value="Articles">Articles</option>
+                </select>
+                <span id="status"></span>
+            </td>
+        </tr>
+    </table>
+    <script>
+        let queryIndex = 0;
+
+        function updateData(){
+            let query = document.getElementById('query');
+            let type = document.getElementById('type');
+            let status = document.getElementById('status');
+            let parans = new URLSearchParams({ query: query.value, type: type.value, queryIndex: queryIndex });
+            fetch('search?' + parans)
+                .then(response => response.text())
+                .then(data => {
+                    let json = JSON.parse(data);
+                    status.textContent = json.status + ' results for ' + query.value;
+                    let current = document.getElementById('result');
+                    let table = document.createElement('table')
+                    table.id = 'result';
+                    let tbody = table.createTBody();
+                    tbody.appendChild(current.children[0].children[0].cloneNode(true));
+                    for(let result of json.result){
+                        let row = table.insertRow();
+                        let cell = row.insertCell();
+                        cell.className = 'tmp-result';
+                        let a = document.createElement('a');
+                        result = decodeURIComponent(result);
+                        a.href = '#';
+                        a.onclick = () => openServer(result);
+                        let text = document.createTextNode(result);
+                        a.appendChild(text);
+                        cell.appendChild(a);
+                    }
+                    current.replaceWith(table)
+                });
+        }
+
+        function openServer(path){
+            let parans = new URLSearchParams({ path: path });
+            fetch('open?' + parans);
+        }
+
+        function search() {
+            clearResults();
+            queryIndex = 0;
+            updateData();
+        }
+
+        function keysearch(event) {
+            if (event.key === "Enter") {
+                search();
+            }
+        }
+
+        function clearResults() {
+            const elements = document.getElementsByClassName('tmp-result');
+            for (let e of elements) {
+                e.parentNode.removeChild(e);
+            }
+        }
+    </script>
+</body>
+
+</html>

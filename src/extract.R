@@ -14,7 +14,7 @@ cat(paste(pdf.text[2]))
 
 bitmap <- pdf_render_page(fileName, page = 1)
 png::writePNG(bitmap, "page.png")
-
+?writePNG
 
 r <- png::writePNG(bitmap, raw())
 r <- png::readPNG(r)
