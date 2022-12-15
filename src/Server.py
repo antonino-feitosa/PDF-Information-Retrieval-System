@@ -61,12 +61,13 @@ class handler(BaseHTTPRequestHandler):
 
     def search_expression(self, expression, book=True, queryIndex=0):
         model = self.model_books if book else self.model_articles
+        processed = self.books_processed if book else self.artc_processed
         try:
             result = model.parse(expression)
             qtd = len(result)
             min_index = min(queryIndex * self.numResults, qtd)
             max_index = min((queryIndex+1) * self.numResults, qtd)
-            result = [path for (_, path) in result[min_index:max_index]]
+            result = [processed[index] for (_, index) in result[min_index:max_index]]
             message = json.dumps({'result': result, 'status': qtd})
             return message
         except:

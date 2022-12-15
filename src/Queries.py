@@ -59,7 +59,7 @@ class ProcessQuery:
             return self.parse_text(text), False
 
     def parse_text(self, text):
-        heap = self.tree.get(text)  # [(-num/max_freq, name),...]
+        heap = self.tree.get(text)  # [(-num/max_freq, index),...]
         if heap:
             idf = math.log((self.num_docs + 1)/(len(heap) + 1))
             heap = [(tf * idf, path) for (tf, path) in heap]

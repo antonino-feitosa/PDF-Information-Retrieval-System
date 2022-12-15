@@ -7,7 +7,7 @@
 - [x] Create inverted index through of a radix tree
 - [x] Store the inverted index
 - [x] Create the query system using boolean expressions (and, or and not operators)
-- [ ] Develop a web system to performs queries
+- [x] Develop a web system to performs queries
 
 # Report
 
@@ -21,6 +21,17 @@ The inverted index uses a Trie representation with charactere keys allowing pref
 
 We stores the inverted index writing the Trie and number of documenta in the file data_index.dat using binary mode.
 
+# Issues
+
+#### High cost of data storage
+- [ ] System optimization
+  - [ ] Trie mapping to file index of processed files
+  - [ ] Keep only significative words of each document
+
+#### File corruption when stopping the process
+
+#### Do not handle no ascii characters
+
 # Future Works
 
 - [ ] Apply spell checker
@@ -29,6 +40,7 @@ We stores the inverted index writing the Trie and number of documenta in the fil
 - [ ] Add title bookmarks
 - [ ] Article Reference
 - [ ] Book cover visualization
+- [ ] Detect language
 
 # References
 
@@ -37,3 +49,4 @@ We stores the inverted index writing the Trie and number of documenta in the fil
 [https://medium.com/product-ai/text-preprocessing-in-python-steps-tools-and-examples-bf025f872908]
 [https://www.guru99.com/pos-tagging-chunking-nltk.html]
 [https://sigmoidal.ai/como-criar-uma-wordcloud-em-python/]
+[https://pypi.org/project/rake-nltk/]

@@ -17,8 +17,8 @@ def cleaning(text: str):
     return text
 
 
-def getNgrams(sentences, n):
-    reg_exp = 'NP: {<NN.?>|<JJ.?>|<RB.?>}'
+def getNgrams(sentences, n, minSize = 4):
+    reg_exp = 'NP: {<NN.?>}'
     if n == 2:
         reg_exp = 'NP: {<NN.?><NN.?>|<JJ.?><NN.?>|<NN.?><JJ.?>|<RB.?><NN.?>|<NN.?><RB.?>}'
     elif n == 3:
@@ -28,7 +28,9 @@ def getNgrams(sentences, n):
     result = []
     for tree in sentences:
         for subtree in tree.subtrees(filter=lambda t: t.label() == 'NP'):
-            result.append(' '.join([word for (word, _) in subtree]))
+            word = ' '.join([word for (word, _) in subtree])
+            if len(word) >= n * minSize and word.isascii():
+                result.append(word)
     return result
 
 
@@ -43,7 +45,7 @@ def loadText(fileName, isPDF = True):
     return text
 
 
-def extractWords(text, verbose = False):
+def extractWords(text, minFreq = 10, minSize = 3, verbose = False):
     sentences = sent_tokenize(text)
     verbose and print('Sentences', sentences)
     sentences = [cleaning(sent) for sent in sentences]
@@ -60,17 +62,18 @@ def extractWords(text, verbose = False):
     sentences = [nltk.pos_tag(sent) for sent in result]
     verbose and print('Tags', sentences)
 
-    onegram = getNgrams(sentences, 1)
-    bigram = getNgrams(sentences, 2)
-    trigram = getNgrams(sentences, 3)
+    onegram = getNgrams(sentences, 1, minSize)
+    bigram = getNgrams(sentences, 2, minSize)
+    trigram = getNgrams(sentences, 3, minSize)
     result = onegram + bigram + trigram
-    verbose and print('Tesult', sentences)
+    verbose and print('Result', sentences)
     
     if not result:
         return [], 0, 0
 
     fd = nltk.FreqDist(result)
-    return fd.items(), fd[fd.max()], fd.N()
+    words = [(w,v) for (w,v) in fd.items() if v >= minFreq]
+    return words, fd[fd.max()]
 
 
 def downloadNLTK():
